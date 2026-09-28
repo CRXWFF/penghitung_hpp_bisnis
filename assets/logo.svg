@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <!-- Rounded container background -->
+  <rect width="120" height="120" rx="28" fill="#EA580C"/>
+  <rect x="6" y="6" width="108" height="108" rx="22" stroke="white" stroke-opacity="0.25" stroke-width="2"/>
+  
+  <!-- Chef Hat / Recipe Book Combination with safe padding (well inside viewBox) -->
+  <g transform="translate(0, 4)">
+    <!-- Base chef hat puff clouds -->
+    <path d="M44 42C44 34.8 49.8 29 57 29C62.2 29 66.7 32 68.8 36.4C71 35.3 73.4 34.7 76 34.7C83.7 34.7 90 41 90 48.7C90 52 88.8 55.1 86.8 57.5C87.6 59 88 60.7 88 62.5C88 68.3 83.3 73 77.5 73H42.5C36.7 73 32 68.3 32 62.5C32 58.4 34.4 54.8 37.8 53C37.3 52 37 50.8 37 49.5C37 44.5 40.1 42 44 42Z" fill="white" fill-opacity="0.98"/>
+    
+    <!-- Hat band ribbon -->
+    <rect x="36" y="70" width="48" height="6" rx="3" fill="#C2410C"/>
+    
+    <!-- Recipe book base / apron fold -->
+    <rect x="38" y="79" width="44" height="5" rx="2.5" fill="white" fill-opacity="0.85"/>
+    
+    <!-- Friendly face and culinary accent -->
+    <circle cx="51" cy="54" r="2.5" fill="#EA580C"/>
+    <circle cx="69" cy="54" r="2.5" fill="#EA580C"/>
+    <!-- Gentle smile -->
+    <path d="M56 61C58 63.5 62 63.5 64 61" stroke="#EA580C" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Sparkle / calculation plus mark badge on hat -->
+    <path d="M72 40L66 46M66 40L72 46" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+</svg>
