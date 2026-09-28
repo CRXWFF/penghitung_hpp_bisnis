@@ -4,6 +4,7 @@ import 'package:penghitung_hpp_bisnis/core/domain/models.dart';
 import 'package:penghitung_hpp_bisnis/core/providers.dart';
 import 'package:penghitung_hpp_bisnis/core/units/unit.dart';
 import 'package:penghitung_hpp_bisnis/core/utils/design_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// No mock provided; follows the same header + tonal-card language as the
 /// four mocked screens.
@@ -56,7 +57,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   items: const [
                     DropdownMenuItem(value: 'IDR', child: Text('Rupiah (IDR)')),
                   ],
-                  onChanged: (v) => setState(() => _draft = _draft.copyWith(currency: v!)),
+                  onChanged: (v) =>
+                      setState(() => _draft = _draft.copyWith(currency: v!)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -69,12 +71,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     SegmentedButton<UnitSystem>(
                       segments: const [
-                        ButtonSegment(value: UnitSystem.metric, label: Text('Metrik')),
-                        ButtonSegment(value: UnitSystem.imperial, label: Text('Imperial')),
+                        ButtonSegment(
+                          value: UnitSystem.metric,
+                          label: Text('Metrik'),
+                        ),
+                        ButtonSegment(
+                          value: UnitSystem.imperial,
+                          label: Text('Imperial'),
+                        ),
                       ],
                       selected: {_draft.unitSystem},
-                      onSelectionChanged: (s) =>
-                          setState(() => _draft = _draft.copyWith(unitSystem: s.first)),
+                      onSelectionChanged: (s) => setState(
+                        () => _draft = _draft.copyWith(unitSystem: s.first),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -96,13 +105,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 title: 'Tema',
                 child: SegmentedButton<ThemeOption>(
                   segments: const [
-                    ButtonSegment(value: ThemeOption.system, label: Text('Sistem')),
-                    ButtonSegment(value: ThemeOption.light, label: Text('Terang')),
-                    ButtonSegment(value: ThemeOption.dark, label: Text('Gelap')),
+                    ButtonSegment(
+                      value: ThemeOption.system,
+                      label: Text('Sistem'),
+                    ),
+                    ButtonSegment(
+                      value: ThemeOption.light,
+                      label: Text('Terang'),
+                    ),
+                    ButtonSegment(
+                      value: ThemeOption.dark,
+                      label: Text('Gelap'),
+                    ),
                   ],
                   selected: {_draft.themeMode},
-                  onSelectionChanged: (s) =>
-                      setState(() => _draft = _draft.copyWith(themeMode: s.first)),
+                  onSelectionChanged: (s) => setState(
+                    () => _draft = _draft.copyWith(themeMode: s.first),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -122,8 +141,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const InfoNote(
                 icon: Icons.cloud_off,
                 title: '100% Offline',
-                body: 'Semua resep, bahan, dan riwayat disimpan lokal di perangkat ini. '
+                body:
+                    'Semua resep, bahan, dan riwayat disimpan lokal di perangkat ini. '
                     'Aplikasi tetap berfungsi penuh tanpa koneksi internet.',
+              ),
+
+              const SizedBox(height: 16),
+              _DonateCard(onTap: _openDonate),
+
+              const SizedBox(height: 24),
+              Center(
+                child: Text(
+                  'Recipe & HPP Manager v1.0.0',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ),
             ],
           ),
@@ -136,14 +169,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ref.read(settingsRepositoryProvider).save(_draft);
     ref.read(appSettingsProvider.notifier).state = _draft;
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pengaturan disimpan')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Pengaturan disimpan')));
+  }
+
+  Future<void> _openDonate() async {
+    const url = 'https://sociabuzz.com/fogg1ng/donate';
+    final uri = Uri.parse(url);
+    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Tidak bisa membuka $url')));
+    }
   }
 }
 
 class _SettingsGroup extends StatelessWidget {
-  const _SettingsGroup({required this.icon, required this.title, required this.child});
+  const _SettingsGroup({
+    required this.icon,
+    required this.title,
+    required this.child,
+  });
 
   final IconData icon;
   final String title;
@@ -165,7 +211,11 @@ class _SettingsGroup extends StatelessWidget {
                   color: theme.colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, size: 18, color: theme.colorScheme.onPrimaryContainer),
+                child: Icon(
+                  icon,
+                  size: 18,
+                  color: theme.colorScheme.onPrimaryContainer,
+                ),
               ),
               const SizedBox(width: 10),
               Text(title, style: theme.textTheme.titleMedium),
@@ -174,6 +224,67 @@ class _SettingsGroup extends StatelessWidget {
           const SizedBox(height: 14),
           child,
         ],
+      ),
+    );
+  }
+}
+
+/// Donate / support card. Tapping opens the Sociabuzz page in the device's
+/// default browser (not an in-app webview, so the user keeps their browser).
+class _DonateCard extends StatelessWidget {
+  const _DonateCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      color: theme.colorScheme.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/icon_sociabuzz_128x128.png',
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Dukung Pengembangan',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Bantu biaya cucuran keringat & pengembangan lewat Sociabuzz.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.open_in_new,
+                size: 18,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
